@@ -23,6 +23,7 @@ module.exports = Player = Character.extend({
         this.lastCheckpoint = null;
         this.formatChecker = new FormatChecker();
         this.disconnectTimeout = null;
+        this.wallet = 0;
         
         this.connection.listen(function(message) {
             var action = parseInt(message[0]);
@@ -58,6 +59,7 @@ module.exports = Player = Character.extend({
                 self.orientation = Utils.randomOrientation();
                 self.updateHitPoints();
                 self.updatePosition();
+                self.addToWallet(message[4]);
                 
                 self.server.addPlayer(self);
                 self.server.enter_callback(self);
@@ -182,9 +184,17 @@ module.exports = Player = Character.extend({
                                 self.regenHealthBy(amount);
                                 self.server.pushToPlayer(self, self.health());
                             }
-                        } else if(Types.isArmor(kind) || Types.isWeapon(kind)) {
+                        } else if(Types.isArmor(kind)) {
+                            self.equipItem(item);
+                            self.removeFromWallet(Types.getArmorCost(kind));
+                            self.broadcast(self.equip(kind));
+                            self.server.pushToPlayer(self, self.msgWallet());
+						} else if(Types.isWeapon(kind)) {
                             self.equipItem(item);
                             self.broadcast(self.equip(kind));
+                        } else if(Types.isMoney(kind)) {
+                            self.addToWallet(Types.getAmountOfMoney(kind));
+                            self.server.pushToPlayer(self, self.msgWallet());
                         }
                     }
                 }
@@ -214,6 +224,10 @@ module.exports = Player = Character.extend({
                 if(checkpoint) {
                     self.lastCheckpoint = checkpoint;
                 }
+            }
+            else if(action === Types.Messages.WALLET) {
+                this.wallet = this.wallet + message[1];
+                self.server.pushToPlayer(self, self.msgWallet());
             }
             else {
                 if(self.message_callback) {
@@ -335,6 +349,25 @@ module.exports = Player = Character.extend({
     equipArmor: function(kind) {
         this.armor = kind;
         this.armorLevel = Properties.getArmorLevel(kind);
+    },
+
+    addToWallet: function(money) {
+        this.wallet = this.wallet + money;
+    },
+
+    removeFromWallet: function(money) {
+        this.wallet = this.wallet - money;
+
+        if (this.wallet < 0)
+            this.wallet = 0;
+    },
+
+    getWallet: function() {
+        return this.wallet;
+    },
+
+    msgWallet: function() {
+        return new Messages.Wallet(this.wallet);
     },
     
     equipWeapon: function(kind) {

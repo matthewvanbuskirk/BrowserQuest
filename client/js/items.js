@@ -100,6 +100,34 @@ define(['item'], function(Item) {
                 this.lootMessage = "You can haz rat burger";
             },
         }),
+		
+        Coin: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.COIN, "object");
+                this.lootMessage = "You got a coin";
+            },
+        }),
+        
+        FiveCoin: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.FIVECOIN, "object");
+                this.lootMessage = "You got 5 coins";
+            },
+        }),
+        
+        TenCoin: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.TENCOIN, "object");
+                this.lootMessage = "You got 10 coins";
+            },
+        }),
+        
+        TwentyCoin: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.TWENTYCOIN, "object");
+                this.lootMessage = "You got 20 coins";
+            },
+        }),
 
         FirePotion: Item.extend({
             init: function(id) {

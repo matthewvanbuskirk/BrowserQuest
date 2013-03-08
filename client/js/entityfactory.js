@@ -129,6 +129,22 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
     EntityFactory.builders[Types.Entities.FIREPOTION] = function(id) {
         return new Items.FirePotion(id);
     };
+	
+    EntityFactory.builders[Types.Entities.COIN] = function(id) {
+        return new Items.Coin(id);
+    };
+    
+    EntityFactory.builders[Types.Entities.FIVECOIN] = function(id) {
+        return new Items.FiveCoin(id);
+    };
+    
+    EntityFactory.builders[Types.Entities.TENCOIN] = function(id) {
+        return new Items.TenCoin(id);
+    };
+    
+    EntityFactory.builders[Types.Entities.TWENTYCOIN] = function(id) {
+        return new Items.TwentyCoin(id);
+    };
 
     EntityFactory.builders[Types.Entities.BURGER] = function(id) {
         return new Items.Burger(id);

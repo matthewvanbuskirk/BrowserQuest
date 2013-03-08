@@ -27,7 +27,8 @@ Types = {
         HP: 23,
         BLINK: 24,
         OPEN: 25,
-        CHECK: 26
+        CHECK: 26,
+        WALLET: 27
     },
     
     Entities: {
@@ -58,6 +59,10 @@ Types = {
         GOLDENARMOR: 26,
         
         // Objects
+        COIN:31,
+        FIVECOIN:32,
+        TENCOIN:33,
+        TWENTYCOIN:34,
         FLASK: 35,
         BURGER: 36,
         CHEST: 37,
@@ -133,6 +138,10 @@ var kinds = {
     redarmor: [Types.Entities.REDARMOR, "armor"],
     goldenarmor: [Types.Entities.GOLDENARMOR, "armor"],
 
+    coin: [Types.Entities.COIN, "object"],
+    fivecoin: [Types.Entities.FIVECOIN, "object"],
+    tencoin: [Types.Entities.TENCOIN, "object"],
+    twentycoin: [Types.Entities.TWENTYCOIN, "object"],
     flask: [Types.Entities.FLASK, "object"],
     cake: [Types.Entities.CAKE, "object"],
     burger: [Types.Entities.BURGER, "object"],
@@ -188,6 +197,21 @@ Types.getArmorRank = function(armorKind) {
     return _.indexOf(Types.rankedArmors, armorKind);
 };
 
+Types.getArmorCost = function(armorKind) {
+	var cost;
+	
+	switch(armorKind) {
+        case Types.Entities.CLOTHARMOR: cost = 0; break;
+        case Types.Entities.LEATHERARMOR: cost = 10; break;
+        case Types.Entities.MAILARMOR: cost = 20; break;
+        case Types.Entities.PLATEARMOR: cost = 50; break;
+		case Types.Entities.REDARMOR: cost = 100; break;
+		case Types.Entities.GOLDENARMOR: cost = 0; break;
+    }
+	
+    return cost;
+};
+
 Types.isPlayer = function(kind) {
     return kinds.getType(kind) === "player";
 };
@@ -231,10 +255,31 @@ Types.isHealingItem = function(kind) {
         || kind === Types.Entities.BURGER;
 };
 
+Types.isMoney = function(kind) {
+    return kind === Types.Entities.COIN
+        || kind === Types.Entities.FIVECOIN
+        || kind === Types.Entities.TENCOIN
+        || kind === Types.Entities.TWENTYCOIN;
+};
+
 Types.isExpendableItem = function(kind) {
     return Types.isHealingItem(kind)
         || kind === Types.Entities.FIREPOTION
-        || kind === Types.Entities.CAKE;
+        || kind === Types.Entities.CAKE
+        || Types.isMoney(kind);
+};
+
+Types.getAmountOfMoney = function(kind) {
+    var money;
+
+    switch(kind) {
+        case Types.Entities.COIN: money = 1; break;
+        case Types.Entities.FIVECOIN: money = 5; break;
+        case Types.Entities.TENCOIN: money = 10; break;
+        case Types.Entities.TWENTYCOIN: money = 20; break;
+    }
+
+    return money;
 };
 
 Types.getKindFromString = function(kind) {

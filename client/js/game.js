@@ -68,7 +68,8 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                                 "sorcerer", "octocat", "beachnpc", "forestnpc", "desertnpc", "lavanpc", "clotharmor", "leatherarmor", "mailarmor", 
                                 "platearmor", "redarmor", "goldenarmor", "firefox", "death", "sword1", "axe", "chest",
                                 "sword2", "redsword", "bluesword", "goldensword", "item-sword2", "item-axe", "item-redsword", "item-bluesword", "item-goldensword", "item-leatherarmor", "item-mailarmor", 
-                                "item-platearmor", "item-redarmor", "item-goldenarmor", "item-flask", "item-cake", "item-burger", "morningstar", "item-morningstar", "item-firepotion"];
+                                "item-platearmor", "item-redarmor", "item-goldenarmor", "item-flask", "item-cake", "item-burger", "morningstar", "item-morningstar", "item-firepotion", 
+                                "item-coin", "item-fivecoin", "item-tencoin", "item-twentycoin"];
         },
     
         setup: function($bubbleContainer, canvas, background, foreground, input) {
@@ -117,6 +118,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             if(this.storage.hasAlreadyPlayed()) {
                 this.player.setSpriteName(this.storage.data.player.armor);
                 this.player.setWeaponName(this.storage.data.player.weapon);
+				this.player.setWallet(this.storage.data.player.wallet);
             }
         
         	this.player.setSprite(this.sprites[this.player.getSpriteName()]);
@@ -791,7 +793,8 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     self.storage.initPlayer(self.player.name);
                     self.storage.savePlayer(self.renderer.getPlayerImage(),
                                             self.player.getSpriteName(),
-                                            self.player.getWeaponName());
+                                            self.player.getWeaponName(),
+											self.player.getWallet());
                     self.showNotification("Welcome to BrowserQuest!");
                 } else {
                     self.showNotification("Welcome back to BrowserQuest!");
@@ -905,7 +908,11 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                             self.player.loot(item);
                             self.client.sendLoot(item); // Notify the server that this item has been looted
                             self.removeItem(item);
-                            self.showNotification(item.getLootMessage());
+                            
+                            if (Types.isMoney(item.kind))
+                                self.showNotification(item.getLootMessage() + " " + (self.player.getWallet() + Types.getAmountOfMoney(item.kind)));
+                            else
+                                self.showNotification(item.getLootMessage());
                         
                             if(item.type === "armor") {
                                 self.tryUnlockingAchievement("FAT_LOOT");
@@ -1055,7 +1062,8 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 self.player.onSwitchItem(function() {
                     self.storage.savePlayer(self.renderer.getPlayerImage(),
                                             self.player.getArmorName(),
-                                            self.player.getWeaponName());
+                                            self.player.getWeaponName(),
+											self.player.getWallet());
                     if(self.equipment_callback) {
                         self.equipment_callback();
                     }
@@ -1405,6 +1413,14 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                         }
                         self.updateBars();
                     }
+                });
+				
+				self.client.onPlayerChangeWallet(function(money) {
+                    self.player.setWallet(money);
+					self.storage.savePlayer(self.renderer.getPlayerImage(),
+                                            self.player.getArmorName(),
+                                            self.player.getWeaponName(),
+											self.player.getWallet());
                 });
             
                 self.client.onPlayerChangeMaxHitPoints(function(hp) {

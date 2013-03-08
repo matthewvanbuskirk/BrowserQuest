@@ -17,6 +17,7 @@ define(function() {
                     name: "",
                     weapon: "",
                     armor: "",
+					wallet: "",
                     image: ""
                 },
                 achievements: {
@@ -77,11 +78,17 @@ define(function() {
             this.data.player.weapon = weapon;
             this.save();
         },
+		
+		setPlayerWallet: function(money) {
+            this.data.player.wallet = money;
+            this.save();
+        },
 
-        savePlayer: function(img, armor, weapon) {
+        savePlayer: function(img, armor, weapon, money) {
             this.setPlayerImage(img);
             this.setPlayerArmor(armor);
             this.setPlayerWeapon(weapon);
+			this.setPlayerWallet(money);
         },
     
         // Achievements

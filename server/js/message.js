@@ -81,6 +81,17 @@ Messages.Health = Message.extend({
     }
 });
 
+Messages.Wallet = Message.extend({
+    init: function(money) {
+        this.money = money;
+    },
+    serialize: function() {
+        var wallet = [Types.Messages.WALLET,
+                      this.money];
+        return wallet;
+    }
+});
+
 Messages.HitPoints = Message.extend({
     init: function(maxHitPoints) {
         this.maxHitPoints = maxHitPoints;

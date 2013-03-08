@@ -31,6 +31,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
             this.handlers[Types.Messages.KILL] = this.receiveKill;
             this.handlers[Types.Messages.HP] = this.receiveHitPoints;
             this.handlers[Types.Messages.BLINK] = this.receiveBlink;
+			this.handlers[Types.Messages.WALLET] = this.receiveWallet;
         
             this.useBison = false;
             this.enable();
@@ -271,6 +272,14 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                 this.health_callback(points, isRegen);
             }
         },
+		
+		receiveWallet: function(data) {
+            var money = data[1];
+        
+            if(this.wallet_callback) {
+                this.wallet_callback(money);
+            }
+        },
     
         receiveChat: function(data) {
             var id = data[1],
@@ -415,6 +424,10 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         onPlayerChangeHealth: function(callback) {
             this.health_callback = callback;
         },
+		
+		onPlayerChangeWallet: function(callback) {
+            this.wallet_callback = callback;
+        },
     
         onPlayerEquipItem: function(callback) {
             this.equip_callback = callback;
@@ -468,7 +481,8 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
             this.sendMessage([Types.Messages.HELLO,
                               player.name,
                               Types.getKindFromString(player.getSpriteName()),
-                              Types.getKindFromString(player.getWeaponName())]);
+                              Types.getKindFromString(player.getWeaponName()),
+							  player.getWallet()]);
         },
 
         sendMove: function(x, y) {
@@ -532,6 +546,11 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         sendOpen: function(chest) {
             this.sendMessage([Types.Messages.OPEN,
                               chest.id]);
+        },
+		
+		sendWallet: function(money) {
+            this.sendMessage([Types.Messages.WALLET,
+                              money]);
         },
     
         sendCheck: function(id) {

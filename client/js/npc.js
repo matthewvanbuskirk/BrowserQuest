@@ -135,9 +135,12 @@ define(['character'], function(Character) {
         ],
         
         "coder": [
-            "Hi! Do you know that you can also play BrowserQuest on your tablet or mobile?",
-            "That's the beauty of HTML5!",
-            "Give it a try..."
+            "Hi! My prices are quite reasonable.",
+            "Leather Armor is 10 coins",
+            "Mail Armor is 20 coins",
+            "Plate Armor is 50 coins",
+            "Red Armor is 100 coins",
+            "Kill stuff to collect coins."
         ],
     
         "beachnpc": [

@@ -19,6 +19,9 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
             // modes
             this.isLootMoving = false;
             this.isSwitchingWeapon = true;
+			
+			// money
+			this.wallet = 9;
         },
     
         loot: function(item) {
@@ -48,6 +51,12 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
                         throw new Exceptions.LootException(msg);
                     }
                 }
+				
+				if(item.type === "armor") {
+					if (this.getWallet() < Types.getArmorCost(item.kind)) {
+						throw new Exceptions.LootException("You cannot afford this "+item.type);
+					}
+				}
             
                 log.info('Player '+this.id+' has looted '+item.id);
                 if(Types.isArmor(item.kind) && this.invincible) {
@@ -165,6 +174,14 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
                     }
                 }, 90);
             }
+        },
+		
+		getWallet: function() {
+            return this.wallet;
+        },
+    
+        setWallet: function(money) {
+            this.wallet = money;
         },
         
         onArmorLoot: function(callback) {
